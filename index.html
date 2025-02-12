@@ -11,6 +11,7 @@
             font-family: Arial, sans-serif;
             background-color: #f4f4f4;
             display: flex;
+            flex-direction: column;
             justify-content: center;
             align-items: center;
             height: 100vh;
@@ -187,6 +188,17 @@
             font-size: 14px;
             color: #777;
         }
+        /* تصميم الفيديو */
+        .video-container {
+            display: none; /* إخفاء الفيديو في البداية */
+            width: 200px; /* حجم صغير للفيديو */
+            margin-top: 20px;
+        }
+        .video-container iframe {
+            width: 100%;
+            height: 150px; /* ارتفاع صغير للفيديو */
+            border-radius: 8px;
+        }
     </style>
 </head>
 <body>
@@ -226,6 +238,17 @@
         <div class="copyright">
             &copy; 2025 Eng Seif Walid
         </div>
+    </div>
+
+    <!-- إضافة الفيديو من YouTube -->
+    <div class="video-container" id="videoContainer">
+        <iframe
+            src="https://www.youtube.com/embed/YM9vbLrF_mA?si=E7zqzIROP3_GWW7o"
+            title="YouTube video player"
+            frameborder="0"
+            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+            allowfullscreen>
+        </iframe>
     </div>
 
     <script>
@@ -300,6 +323,9 @@
             }
             var gpa = totalPoints / numSubjects;
             document.getElementById('result').innerText = `${translations.result[isEnglish ? "en" : "ar"]} ${gpa.toFixed(2)}`;
+
+            // إظهار الفيديو بعد ظهور النتيجة
+            document.getElementById('videoContainer').style.display = 'block';
         }
 
         updateNumSubjectsOptions();
