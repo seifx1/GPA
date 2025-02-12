@@ -1,0 +1,309 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GPA Calculator | حاسبة المعدل التراكمي</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        /* التصميم العام */
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            transition: background-color 0.3s, color 0.3s;
+        }
+        .container {
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            text-align: center;
+            width: 300px;
+            transition: background-color 0.3s, color 0.3s;
+            opacity: 0; /* إخفاء العنصر في البداية */
+            transform: translateY(20px); /* تحريك العنصر لأسفل قليلاً */
+            animation: fadeInUp 0.5s ease forwards; /* انيميشن الظهور */
+        }
+        @keyframes fadeInUp {
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        h1 {
+            font-size: 24px;
+            margin-bottom: 20px;
+        }
+        label {
+            display: block;
+            margin-bottom: 10px;
+            font-weight: bold;
+        }
+        select, input {
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 20px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            text-align: center;
+        }
+        button {
+            background-color: #007bff;
+            color: #fff;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 4px;
+            cursor: pointer;
+            width: 100%;
+        }
+        button:hover {
+            background-color: #0056b3;
+        }
+        .result {
+            margin-top: 20px;
+            font-size: 18px;
+            font-weight: bold;
+        }
+        body.dark-mode {
+            background-color: #333;
+            color: #fff;
+        }
+        body.dark-mode .container {
+            background-color: #444;
+            color: #fff;
+        }
+        body.dark-mode select, body.dark-mode input {
+            background-color: #555;
+            color: #fff;
+            border-color: #777;
+        }
+        .controls {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 20px;
+        }
+        .controls button {
+            width: auto;
+            padding: 5px 10px;
+            font-size: 14px;
+        }
+        .icons {
+            display: inline-flex;
+            margin-top: 20px;
+        }
+        .icons a {
+            margin: 0 15px;
+            text-decoration: none;
+            color: #fff;
+            display: block;
+            position: relative;
+        }
+        .icons a .layer {
+            width: 55px;
+            height: 55px;
+            transition: transform 0.3s;
+        }
+        .icons a:hover .layer {
+            transform: rotate(-35deg) skew(20deg);
+        }
+        .icons a .layer span {
+            position: absolute;
+            top: 0;
+            left: 0;
+            height: 100%;
+            width: 100%;
+            border: 1px solid #fff;
+            border-radius: 5px;
+            transition: all 0.3s;
+        }
+        .icons a .layer span.fab {
+            font-size: 30px;
+            line-height: 55px;
+            text-align: center;
+        }
+        .icons a:hover .layer span:nth-child(1) {
+            opacity: 0.2;
+        }
+        .icons a:hover .layer span:nth-child(2) {
+            opacity: 0.4;
+            transform: translate(5px, -5px);
+        }
+        .icons a:hover .layer span:nth-child(3) {
+            opacity: 0.6;
+            transform: translate(10px, -10px);
+        }
+        .icons a:hover .layer span:nth-child(4) {
+            opacity: 0.8;
+            transform: translate(15px, -15px);
+        }
+        .icons a:hover .layer span:nth-child(5) {
+            opacity: 1;
+            transform: translate(20px, -20px);
+        }
+        .icons a:nth-child(1) .layer span,
+        .icons a:nth-child(1) .text {
+            color: #4267B2;
+            border-color: #4267B2;
+        }
+        .icons a:nth-child(2) .layer span,
+        .icons a:nth-child(2) .text {
+            color: #f21dc4;
+            border-color: #ec0a87;
+        }
+        .icons a:nth-child(3) .layer span,
+        .icons a:nth-child(3) .text {
+            color: #E1306C;
+            border-color: #E1306C;
+        }
+        .icons a:hover:nth-child(1) .layer span {
+            box-shadow: -1px 1px 3px #4267B2;
+        }
+        .icons a:hover:nth-child(2) .layer span {
+            box-shadow: -1px 1px 3px #1DA1F2;
+        }
+        .icons a:hover:nth-child(3) .layer span {
+            box-shadow: -1px 1px 3px #E1306C;
+        }
+        .icons a .text {
+            position: absolute;
+            left: 50%;
+            bottom: -5px;
+            opacity: 0;
+            font-weight: 500;
+            transform: translateX(-50%);
+            transition: bottom 0.3s ease, opacity 0.3s ease;
+        }
+        .icons a:hover .text {
+            bottom: -35px;
+            opacity: 1;
+        }
+        .copyright {
+            margin-top: 20px;
+            font-size: 14px;
+            color: #777;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="controls">
+            <button onclick="toggleLanguage()">English/عربي</button>
+            <button onclick="toggleDarkMode()">🌙/☀️</button>
+        </div>
+        <h1 id="title">حاسبة المعدل التراكمي</h1>
+        <label for="numSubjects" id="numSubjectsLabel">عدد المواد:</label>
+        <select id="numSubjects" onchange="generateGradeInputs()"></select>
+        <div id="gradesInput"></div>
+        <button onclick="calculateGPA()" id="calculateButton">احسب المعدل التراكمي</button>
+        <div class="result" id="result"></div>
+        <div class="icons">
+            <a href="https://www.facebook.com/profile.php?id=100037917620724&locale=ar_AR" target="_blank">
+                <div class="layer">
+                    <span class="fab fa-facebook"></span>
+                    <span class="fab fa-facebook"></span>
+                    <span class="fab fa-facebook"></span>
+                    <span class="fab fa-facebook"></span>
+                    <span class="fab fa-facebook"></span>
+                </div>
+                <div class="text">Facebook</div>
+            </a>
+            <a href="https://www.instagram.com/_sifoo.7/" target="_blank">
+                <div class="layer">
+                    <span class="fab fa-instagram"></span>
+                    <span class="fab fa-instagram"></span>
+                    <span class="fab fa-instagram"></span>
+                    <span class="fab fa-instagram"></span>
+                    <span class="fab fa-instagram"></span>
+                </div>
+                <div class="text">Instagram</div>
+            </a>
+        </div>
+        <div class="copyright">
+            &copy; 2023 Eng Seif Walid
+        </div>
+    </div>
+
+    <script>
+        let isEnglish = false;
+        const translations = {
+            title: { ar: "حاسبة المعدل التراكمي", en: "GPA Calculator" },
+            numSubjectsLabel: { ar: "عدد المواد:", en: "Number of Subjects:" },
+            calculateButton: { ar: "احسب المعدل التراكمي", en: "Calculate GPA" },
+            result: { ar: "المعدل التراكمي:", en: "Your GPA:" },
+            numSubjectsOptions: {
+                ar: ["1 مادة", "2 مواد", "3 مواد", "4 مواد", "5 مواد", "6 مواد", "7 مواد", "8 مواد", "9 مواد", "10 مواد"],
+                en: ["1 Subject", "2 Subjects", "3 Subjects", "4 Subjects", "5 Subjects", "6 Subjects", "7 Subjects", "8 Subjects", "9 Subjects", "10 Subjects"]
+            }
+        };
+
+        function toggleLanguage() {
+            isEnglish = !isEnglish;
+            updateLanguage();
+            generateGradeInputs();
+            updateNumSubjectsOptions();
+        }
+
+        function updateLanguage() {
+            document.getElementById("title").innerText = translations.title[isEnglish ? "en" : "ar"];
+            document.getElementById("numSubjectsLabel").innerText = translations.numSubjectsLabel[isEnglish ? "en" : "ar"];
+            document.getElementById("calculateButton").innerText = translations.calculateButton[isEnglish ? "en" : "ar"];
+        }
+
+        function updateNumSubjectsOptions() {
+            const numSubjectsSelect = document.getElementById("numSubjects");
+            numSubjectsSelect.innerHTML = "";
+            const options = translations.numSubjectsOptions[isEnglish ? "en" : "ar"];
+            options.forEach((text, index) => {
+                const option = document.createElement("option");
+                option.value = index + 1;
+                option.text = text;
+                numSubjectsSelect.appendChild(option);
+            });
+        }
+
+        function toggleDarkMode() {
+            document.body.classList.toggle("dark-mode");
+        }
+
+        function generateGradeInputs() {
+            var numSubjects = document.getElementById('numSubjects').value;
+            var gradesInput = document.getElementById('gradesInput');
+            gradesInput.innerHTML = '';
+            for (var i = 0; i < numSubjects; i++) {
+                gradesInput.innerHTML += `
+                    <label for="grade${i}">${isEnglish ? "Subject" : "درجة المادة"} ${i + 1}:</label>
+                    <select id="grade${i}">
+                        <option value="4.3">A+</option>
+                        <option value="4.0">A</option>
+                        <option value="3.3">B+</option>
+                        <option value="3.0">B</option>
+                        <option value="2.3">C+</option>
+                        <option value="2.0">C</option>
+                        <option value="1.3">D+</option>
+                        <option value="1.0">D</option>
+                        <option value="0.0">F</option>
+                    </select>
+                `;
+            }
+        }
+
+        function calculateGPA() {
+            var numSubjects = document.getElementById('numSubjects').value;
+            var totalPoints = 0;
+            for (var i = 0; i < numSubjects; i++) {
+                totalPoints += parseFloat(document.getElementById(`grade${i}`).value);
+            }
+            var gpa = totalPoints / numSubjects;
+            document.getElementById('result').innerText = `${translations.result[isEnglish ? "en" : "ar"]} ${gpa.toFixed(2)}`;
+        }
+
+        updateNumSubjectsOptions();
+        generateGradeInputs();
+    </script>
+</body>
+</html>
